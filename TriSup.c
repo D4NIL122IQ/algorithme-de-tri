@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 void setup_tab(int tab[], int tai)
 {
@@ -34,12 +35,20 @@ void identique(int tab1[], int tab2[], int taille)
     }
 }
 
+void permutation(int *a, int *b)
+{
+    int tmp;
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
 void triComptage(int tab[], int tai)
 {
     int tem[tai];
     int tabPosition[tai];
     int i, j, c;
 
+    affichage(tab, tai);
     for (i = 0; i < tai; i++)
     {
         c = 0;
@@ -52,27 +61,72 @@ void triComptage(int tab[], int tai)
         }
         tabPosition[i] = c;
     }
+    affichage(tabPosition, tai);
 
     for (i = 0; i < tai; i++)
     {
-        j = tabPosition[i];
-        tem[j] = tab[i];
+        c = 0;
+        while (tabPosition[c] != i)
+        {
+            c++;
+        }
+        tem[i] = tab[c];
     }
     identique(tem, tab, tai);
 }
 
+void triPairImpair(int tab[], int taille)
+{
+    bool tri = false;
+    int i;
+    int temp;
+    while (tri == false)
+    {
+        tri = true;
+        i = 0;
+        while (i < taille - 1)
+        {
+            if (tab[i] > tab[i + 1])
+            {
+                temp = tab[i];
+                tab[i] = tab[i + 1];
+                tab[i + 1] = temp;
+                tri = false;
+            }
+            i += 2;
+        }
+        i = 1;
+        while (i < taille - 1)
+        {
+            if (tab[i] > tab[i + 1])
+            {
+                temp = tab[i];
+                tab[i] = tab[i + 1];
+                tab[i + 1] = temp;
+                tri = false;
+            }
+            i += 2;
+        }
+    }
+}
 int main()
 {
     int taille = 10;
-    int rep = 1;
+    int rep = 2;
+    int choix;
     int tabComptage[taille];
     int temp[taille];
+    int tabPi[taille];
 
     srand(time(NULL));
     setup_tab(temp, taille);
     do
     {
-        switch (rep)
+        printf("1. pour le tri comptage\n");
+        printf("2. pour le tri pair-impair\n");
+        printf("votre choix : ");
+        scanf("%d", &choix);
+        switch (choix)
         {
         case 1:
             identique(temp, tabComptage, taille);
@@ -82,6 +136,17 @@ int main()
             double resultat1 = (double)(fin - debut) / CLOCKS_PER_SEC;
             affichage(tabComptage, taille);
             printf("temps d'execution du tri comptageb : %f s", resultat1);
+            rep = 0;
+            break;
+
+        case 2:
+            identique(temp, tabPi, taille);
+            clock_t debut2 = clock();
+            triPairImpair(tabPi, taille);
+            clock_t fin2 = clock();
+            double resultat2 = (double)(fin - debut) / CLOCKS_PER_SEC;
+            affichage(tabPi, taille);
+            printf("temps d'execution du tri pair impair : %f s", resultat1);
             rep = 0;
             break;
 
