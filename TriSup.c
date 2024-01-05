@@ -48,7 +48,6 @@ void triComptage(int tab[], int tai)
     int tabPosition[tai];
     int i, j, c;
 
-    affichage(tab, tai);
     for (i = 0; i < tai; i++)
     {
         c = 0;
@@ -61,7 +60,6 @@ void triComptage(int tab[], int tai)
         }
         tabPosition[i] = c;
     }
-    affichage(tabPosition, tai);
 
     for (i = 0; i < tai; i++)
     {
