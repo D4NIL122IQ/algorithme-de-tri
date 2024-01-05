@@ -3,12 +3,14 @@
 #include <time.h>
 #include <stdbool.h>
 
-typedef struct arbre
+typedef struct noeud
 {
     int val;
     struct noeud *fd;
     struct noeud *fg;
-} arbre;
+} noeud;
+
+typedef noeud arbre;
 
 void setup_tab(int tab[], int tai)
 {
@@ -139,7 +141,6 @@ arbre *CreationABR(arbre *ABR, int val)
     if (ABR == NULL)
     {
         ABR = CreationNoeud(val);
-        return ABR;
     }
     else
     {
@@ -148,7 +149,6 @@ arbre *CreationABR(arbre *ABR, int val)
             if (ABR->fg == NULL)
             {
                 ABR->fg = CreationNoeud(val);
-                return ABR;
             }
             else
             {
@@ -160,7 +160,6 @@ arbre *CreationABR(arbre *ABR, int val)
             if (ABR->fd == NULL)
             {
                 ABR->fd = CreationNoeud(val);
-                return ABR;
             }
             else
             {
@@ -168,6 +167,7 @@ arbre *CreationABR(arbre *ABR, int val)
             }
         }
     }
+    return ABR;
 }
 
 arbre *TransformationABR(arbre *ABR, int tab[], int i, int taille)
@@ -181,13 +181,16 @@ arbre *TransformationABR(arbre *ABR, int tab[], int i, int taille)
     return ABR;
 }
 
-void infixeINtab(arbre *ABR, int tab[], int indice)
+int indice = 0;
+
+void infixeINtab(arbre *ABR, int tab[])
 {
     if (ABR != NULL)
     {
-        infixeINtab(ABR->fg, tab, indice + 1);
+        infixeINtab(ABR->fg, tab);
         tab[indice] = ABR->val;
-        infixeINtab(ABR->fd, tab, indice + 1);
+        indice += 1;
+        infixeINtab(ABR->fd, tab);
     }
 }
 
@@ -196,8 +199,7 @@ void triArborescent(int tab[], int taille)
     arbre *racineABR = NULL;
 
     racineABR = TransformationABR(racineABR, tab, 0, taille);
-    affichageArbre(racineABR, 'r');
-    infixeINtab(racineABR, tab, 0);
+    infixeINtab(racineABR, tab);
 }
 
 int main()
