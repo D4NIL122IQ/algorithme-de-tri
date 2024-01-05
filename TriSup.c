@@ -3,6 +3,13 @@
 #include <time.h>
 #include <stdbool.h>
 
+typedef struct arbre
+{
+    int val;
+    struct noeud *fd;
+    struct noeud *fg;
+} arbre;
+
 void setup_tab(int tab[], int tai)
 {
     int i;
@@ -35,6 +42,16 @@ void identique(int tab1[], int tab2[], int taille)
     }
 }
 
+void affichageArbre(arbre *racine, char caaa)
+{
+    if (racine != NULL)
+    {
+        printf("%c __%d__", caaa, racine->val);
+        affichageArbre(racine->fg, 'g');
+        affichageArbre(racine->fd, 'd');
+    }
+}
+
 void permutation(int *a, int *b)
 {
     int tmp;
@@ -42,6 +59,7 @@ void permutation(int *a, int *b)
     *a = *b;
     *b = tmp;
 }
+
 void triComptage(int tab[], int tai)
 {
     int tem[tai];
@@ -107,6 +125,81 @@ void triPairImpair(int tab[], int taille)
         }
     }
 }
+
+arbre *CreationNoeud(int val)
+{
+    arbre *new = malloc(sizeof(arbre));
+    new->val = val;
+    new->fd = new->fg = NULL;
+    return new;
+}
+
+arbre *CreationABR(arbre *ABR, int val)
+{
+    if (ABR == NULL)
+    {
+        ABR = CreationNoeud(val);
+        return ABR;
+    }
+    else
+    {
+        if (val < ABR->val)
+        {
+            if (ABR->fg == NULL)
+            {
+                ABR->fg = CreationNoeud(val);
+                return ABR;
+            }
+            else
+            {
+                CreationABR(ABR->fg, val);
+            }
+        }
+        else
+        {
+            if (ABR->fd == NULL)
+            {
+                ABR->fd = CreationNoeud(val);
+                return ABR;
+            }
+            else
+            {
+                CreationABR(ABR->fd, val);
+            }
+        }
+    }
+}
+
+arbre *TransformationABR(arbre *ABR, int tab[], int i, int taille)
+{
+    if (i < taille)
+    {
+        ABR = CreationABR(ABR, tab[i]);
+        TransformationABR(ABR, tab, i + 1, taille);
+    }
+
+    return ABR;
+}
+
+void infixeINtab(arbre *ABR, int tab[], int indice)
+{
+    if (ABR != NULL)
+    {
+        infixeINtab(ABR->fg, tab, indice + 1);
+        tab[indice] = ABR->val;
+        infixeINtab(ABR->fd, tab, indice + 1);
+    }
+}
+
+void triArborescent(int tab[], int taille)
+{
+    arbre *racineABR = NULL;
+
+    racineABR = TransformationABR(racineABR, tab, 0, taille);
+    affichageArbre(racineABR, 'r');
+    infixeINtab(racineABR, tab, 0);
+}
+
 int main()
 {
     int taille = 10;
@@ -115,6 +208,7 @@ int main()
     int tabComptage[taille];
     int temp[taille];
     int tabPi[taille];
+    int tabArbre[taille];
 
     srand(time(NULL));
     setup_tab(temp, taille);
@@ -122,6 +216,7 @@ int main()
     {
         printf("1. pour le tri comptage\n");
         printf("2. pour le tri pair-impair\n");
+        printf("3. pour le tri arborescent\n");
         printf("votre choix : ");
         scanf("%d", &choix);
         switch (choix)
@@ -148,6 +243,16 @@ int main()
             rep = 0;
             break;
 
+        case 3:
+            identique(temp, tabArbre, taille);
+            clock_t debut3 = clock();
+            triArborescent(tabArbre, taille);
+            clock_t fin3 = clock();
+            double resultat3 = (double)(fin - debut) / CLOCKS_PER_SEC;
+            affichage(tabArbre, taille);
+            printf("temps d'execution du tri pair impair : %f s", resultat1);
+            rep = 0;
+            break;
         default:
             break;
         }
